@@ -13,7 +13,7 @@ Output: res: 0.8310939344005951
 
 [Java Regex Pattern](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.htm)
 
-[Java Regex Matcher](lhttps://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html)
+[Java Regex Matcher](https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html)
 
 [Newton-Raphson Method](https://en.wikipedia.org/wiki/Newton%27s_method)
 
