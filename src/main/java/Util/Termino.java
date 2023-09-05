@@ -46,6 +46,8 @@ public class Termino
             String coefStr = monomioMatcher.group(1);
             String literalStr = monomioMatcher.group(2);
             String expStr = (mg == 3) ? monomioMatcher.group(3) : null;
+            
+            if (coefStr.equals("-")) coefStr = "-1"; // operador unario
 
             this.coef = (coefStr == null || coefStr.isEmpty()) ? 1 : Integer.parseInt(coefStr);
             this.literal = String.valueOf(literalStr);

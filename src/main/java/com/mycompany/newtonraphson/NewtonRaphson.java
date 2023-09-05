@@ -17,6 +17,7 @@ public class NewtonRaphson
 {
 
     public static Scanner scanner = new Scanner(System.in).useDelimiter("\n");
+    public static Pattern numPattern = Pattern.compile("(-?\\d+(\\.\\d+)?)");
 
     public static void main(String[] args)
     {
@@ -30,38 +31,21 @@ public class NewtonRaphson
 
     private static void solve()
     {
-        System.out.println("Ingresa los datos ([eq], tol = [tol], [var] = [inicio])");
+//        System.out.println("\nIngresa los datos ([eq], tol = [tol], [var] = [inicio])");
         var input = scanner.next();
 
         try {
             var parts = input.split(",");
-            
             generalPartsValidation(parts);
-
             var eq = new Ecuacion(parts[0]);
-
-            var numPattern = Pattern.compile("(\\d+(\\.\\d+)?)");
-            var tolMatcher = numPattern.matcher(parts[1]);
-            if (!tolMatcher.find()) {
-                throw new Exception("Tolerancia '%s' inválida");
-            }
-            double tol = Double.parseDouble(tolMatcher.group());
-
-            var variablePattern = Pattern.compile("([a-zA-Z]+)");
-            var variableMatcher = variablePattern.matcher(parts[2]);
-            if (!variableMatcher.find()) {
-                throw new Exception("Valor inicial requerido");
-            }
-
-            var inicioMatcher = numPattern.matcher(parts[2]);
-            if (!inicioMatcher.find()) {
-                throw new Exception("Valor inicial requerido");
-            }
-            double inicio = Double.parseDouble(inicioMatcher.group());
-
+            double tol = parseTolerance(parts[1]);
+            double inicio = parseInicio(parts[2]);
             var res = eq.NewtonRaphson(tol, inicio);
-
-            System.out.println("res: " + res);
+            if (res == Double.NaN) {
+                System.out.println("No se encontró solución real");
+            } else {
+                System.out.println("res: " + res);
+            }
         } catch (Exception ex) {
             Logger.getLogger(NewtonRaphson.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -82,6 +66,36 @@ public class NewtonRaphson
         if (parts[2].isBlank()) {
             throw new Exception("Valor inicial requerido");
         }
+    }
+
+    private static double parseTolerance(String part) throws Exception
+    {
+        var tolMatcher = numPattern.matcher(part);
+        if (!tolMatcher.find()) {
+            var msg = String.format("Tolerancia '%s' inválida", part);
+            throw new Exception(msg);
+        }
+        double tol = Double.parseDouble(tolMatcher.group());
+        if (tol <= 0) {
+            throw new Exception("La tolerancia debe ser mayor a 0");
+        }
+        return tol;
+    }
+
+    private static double parseInicio(String part) throws Exception
+    {
+        var variablePattern = Pattern.compile("([a-zA-Z]+)");
+        var variableMatcher = variablePattern.matcher(part);
+        if (!variableMatcher.find()) {
+            throw new Exception("Valor inicial requerido");
+        }
+
+        var inicioMatcher = numPattern.matcher(part);
+        if (!inicioMatcher.find()) {
+            throw new Exception("Valor inicial requerido");
+        }
+        double inicio = Double.parseDouble(inicioMatcher.group());
+        return inicio;
     }
 
 }

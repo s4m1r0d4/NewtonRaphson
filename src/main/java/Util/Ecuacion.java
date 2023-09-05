@@ -25,7 +25,7 @@ public class Ecuacion
 
     public Ecuacion(String str) throws Exception
     {
-        String[] tokens = str.split(" ");
+        String[] tokens = str.trim().split(" ");
 
         terminos = new ArrayList<>();
 
@@ -39,8 +39,12 @@ public class Ecuacion
                     throw new Exception("[ERROR] Faltan operandos para el operador +");
                 }
             }
-            case "-" ->
+            case "-" -> {
+                if (i + 1 >= tokens.length) {
+                    throw new Exception("[ERROR] Faltan operandos para el operador -");
+                }
                 nextIsNegative = true;
+            }
             default -> {
                 var termino = new Termino(tk);
 
@@ -48,7 +52,7 @@ public class Ecuacion
                     if (!termino.constant) variable = termino.literal;
                 } else {
                     if (!termino.constant && !termino.literal.equals(variable)) {
-                        throw new Exception("[ERROR Multiples variables detectadas");
+                        throw new Exception("[ERROR] Multiples variables detectadas");
                     }
                 }
                 if (nextIsNegative) {
@@ -78,7 +82,7 @@ public class Ecuacion
         return sb.toString();
     }
 
-    public Ecuacion differenciar()
+    public Ecuacion diferenciar()
     {
         var res = new Ecuacion();
         var newterms = new ArrayList<Termino>();
@@ -117,45 +121,43 @@ public class Ecuacion
 
         for (int i = 0; i < terminos.size(); i++) {
             Termino t = terminos.get(i);
-
             if (t.constant) {
                 res += t.coef;
                 continue;
             }
-
             res += t.coef * (Math.pow(x, t.exp));
         }
 
         return res;
     }
-    
+
     public double NewtonRaphson(double tol, double start)
     {
         double x0 = start, x1;
-        var fprima = this.differenciar();
-        int iteraciones = 1000000;
-        
+        var fprima = this.diferenciar();
+        int iteraciones = 100000;
+
         while (true) {
             --iteraciones;
             if (iteraciones == 0) break;
-            
+
             double fp = fprima.evaluar(x0);
             if (fp == 0) {
-                // encontramos máximo o mínimo local
+                // encontramos máximo o mínimo local, continuamos desde otro lado
                 var rand = new Random();
                 int min = -1000;
                 int max = 1000;
                 x0 = rand.nextInt((max - min) + 1) + min;
                 continue;
             }
-            
+
             double f = this.evaluar(x0);
             if (abs(f) < tol) return x0;
-            
+
             x1 = x0 - f / fp;
             x0 = x1;
         }
-        
+
         return Double.NaN;
     }
 }
