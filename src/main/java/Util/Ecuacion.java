@@ -145,8 +145,8 @@ public class Ecuacion
             if (fp == 0) {
                 // encontramos máximo o mínimo local, continuamos desde otro lado
                 var rand = new Random();
-                int min = -1000;
-                int max = 1000;
+                int min = -1000000;
+                int max = 1000000;
                 x0 = rand.nextInt((max - min) + 1) + min;
                 continue;
             }
